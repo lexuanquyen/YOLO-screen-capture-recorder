@@ -9,6 +9,12 @@
 #include "demo.h"
 #include <time.h>
 
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libswscale/swscale.h"
+#include "libavdevice/avdevice.h"
+
+
 #define DEMO 1
 
 #ifdef OPENCV
