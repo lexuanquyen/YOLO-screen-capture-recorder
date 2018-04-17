@@ -44,3 +44,5 @@
 　 Q. opencv cvCaptureFromFile读取视频总返回NULL
 
 　 A. 缺少opencv_ffmpeg340_64.dll，将opencv_ffmpeg340_64.dll加入到项目根文件夹下或者Release中。
+
+- 螢幕擷取預設使用gdigrab，要改用dshow ，請於 code\cpfolder\demo.c 修改
