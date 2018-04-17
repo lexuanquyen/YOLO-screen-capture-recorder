@@ -402,6 +402,19 @@ void visualize(char *cfgfile, char *weightfile)
 
 int main(int argc, char **argv)
 {
+	
+	argc = 7;
+	argv[1] = "detector";
+	argv[2] = "demo";
+	argv[3] = "cfg/coco.data";
+	argv[4] = "cfg/yolov3.cfg";
+	argv[5] = "yolov3.weights";
+	argv[6] = "abc.mp4";
+	
+	//yolotest.exe detector demo cfg / coco.data cfg / yolov3.cfg yolov3.weights abc.mp4
+	printf("%d\t%s\t%s\t%s\t%s\t%s\t%s\n", argc, argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]);
+	system("pause");
+	
     //test_resize("data/bad.jpg");
     //test_box();
     //test_convolutional_layer();
