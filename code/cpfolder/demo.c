@@ -442,22 +442,22 @@ int switch_format(AVFrame *pYuvFrame, int nWidth, int nHeight, int nDataLen, cha
 	SwsContext * scxt = sws_getContext(nWidth, nHeight, AV_PIX_FMT_BGR24, nWidth, nHeight, AV_PIX_FMT_YUV420P, SWS_POINT, NULL, NULL, NULL);
 
 
-	//AVFrame *m_pYUVFrame = new AVFrame[1];  
+	//AVFrame *m_pYUVFrame = new AVFrame[1];
 	avpicture_fill((AVPicture*)pRgbFrame, (uint8_t*)pData, AV_PIX_FMT_RGB24, nWidth, nHeight);
 
 
-	//将YUV buffer 填充YUV Frame  
+	//将YUV buffer 填充YUV Frame
 	avpicture_fill((AVPicture*)pYuvFrame, (uint8_t*)pYuvBuffer, AV_PIX_FMT_YUV420P, nWidth, nHeight);
 
 
-	// 翻转RGB图像  
-	// pRgbFrame->data[0]  += pRgbFrame->linesize[0] * (nHeight - 1);  
-	// pRgbFrame->linesize[0] *= -1;                     
-	// pRgbFrame->data[1]  += pRgbFrame->linesize[1] * (nHeight / 2 - 1);  
-	// pRgbFrame->linesize[1] *= -1;  
-	// pRgbFrame->data[2]  += pRgbFrame->linesize[2] * (nHeight / 2 - 1);  
-	// pRgbFrame->linesize[2] *= -1;  
-	//将RGB转化为YUV  
+	// 翻转RGB图像
+	// pRgbFrame->data[0]  += pRgbFrame->linesize[0] * (nHeight - 1);
+	// pRgbFrame->linesize[0] *= -1;
+	// pRgbFrame->data[1]  += pRgbFrame->linesize[1] * (nHeight / 2 - 1);
+	// pRgbFrame->linesize[1] *= -1;
+	// pRgbFrame->data[2]  += pRgbFrame->linesize[2] * (nHeight / 2 - 1);
+	// pRgbFrame->linesize[2] *= -1;
+	//将RGB转化为YUV
 	if (sws_scale(scxt, pRgbFrame->data, pRgbFrame->linesize, 0, nHeight, pYuvFrame->data, pYuvFrame->linesize) < 0)
 	{
 		printf("Error\n");
@@ -540,6 +540,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 	}
 	avg = calloc(demo_total, sizeof(float));
 
+	/*
 	if (filename) {
 		printf("video file: %s\n", filename);
 		cap = cvCaptureFromFile(filename);
@@ -559,14 +560,10 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 	}
 
 	if (!cap) error("Couldn't connect to webcam.\n");
+	*/
 	//eggplant();
-	buff[0] = get_image_from_stream(cap);
-	buff[1] = copy_image(buff[0]);
-	buff[2] = copy_image(buff[0]);
-	buff_letter[0] = letterbox_image(buff[0], net->w, net->h);
-	buff_letter[1] = letterbox_image(buff[0], net->w, net->h);
-	buff_letter[2] = letterbox_image(buff[0], net->w, net->h);
-	ipl = cvCreateImage(cvSize(buff[0].w, buff[0].h), IPL_DEPTH_8U, buff[0].c);
+
+
 
 	int count = 0;
 	if (!prefix) {
@@ -583,26 +580,226 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 
 	demo_time = what_time_is_it_now();
 
-	while (!demo_done) {
-		//	system("pause");
-		buff_index = (buff_index + 1) % 3;
-		if (pthread_create(&fetch_thread, 0, fetch_in_thread, 0)) error("Thread creation failed");
-		if (pthread_create(&detect_thread, 0, detect_in_thread, 0)) error("Thread creation failed");
-		if (!prefix) {
-			fps = 1. / (what_time_is_it_now() - demo_time);
-			demo_time = what_time_is_it_now();
-			display_in_thread(0);
-		}
-		else {
-			char name[256];
-			sprintf(name, "%s_%08d", prefix, count);
-			save_image(buff[(buff_index + 1) % 3], name);
-		}
-		pthread_join(fetch_thread, 0);
-		pthread_join(detect_thread, 0);
-		++count;
+
+	av_register_all();
+	avformat_network_init();
+
+	//
+	IplImage *img;
+	AVFormatContext *pFormatCtx = NULL;
+	int             inumber, videoStream;
+	AVCodecContext  *pCodecCtx;
+	AVCodec         *pCodec;
+	AVFrame         *pFrame;
+	AVFrame         *pFrameRGB;
+	AVPacket        packet;
+	int             frameFinished;
+	int             numBytes;
+	uint8_t         *buffer;
+
+	pFormatCtx = avformat_alloc_context();
+	avdevice_register_all();
+
+	// Register all formats and codecs  
+	av_register_all();
+
+
+	AVDictionary* options = NULL;
+	//Set some options
+	//grabbing frame rate
+	//av_dict_set(&options,"framerate","5",0);
+	//The distance from the left edge of the screen or desktop
+	av_dict_set(&options, "offset_x", "0", 0);
+	//The distance from the top edge of the screen or desktop
+	av_dict_set(&options, "offset_y", "0", 0);
+	//Video frame size. The default is to capture the full screen
+	av_dict_set(&options, "video_size", "1920x1080", 0);
+	AVInputFormat *ifmt = av_find_input_format("gdigrab");
+	if (avformat_open_input(&pFormatCtx, "desktop", ifmt, &options) != 0) {
+		printf("Couldn't open input stream.（无法打开输入流）\n");
+		return -1;
 	}
 
+	/*
+	AVInputFormat *ifmt = av_find_input_format("dshow");
+	if (avformat_open_input(&pFormatCtx, "video=screen-capture-recorder", ifmt, NULL) != 0) {
+		printf("Couldn't open input stream.\n");
+		//		return -1;
+	}
+	*/
+
+	// Retrieve stream information  
+	if (avformat_find_stream_info(pFormatCtx, NULL) < 0)
+		//		return -1; // Couldn't find stream information  
+
+		// Dump information about file onto standard error  
+		//av_dump_format(pFormatCtx, 0, argv[1], false);
+		av_dump_format(pFormatCtx, 0, "", 0);
+
+	// Find the first video stream  
+	videoStream = -1;
+	for (inumber = 0; inumber < pFormatCtx->nb_streams; inumber++)
+		if (pFormatCtx->streams[inumber]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+		{
+			videoStream = inumber;
+			break;
+		}
+	if (videoStream == -1)
+		return -1; // Didn't find a video stream  
+
+				   // Get a pointer to the codec context for the video stream  
+	pCodecCtx = pFormatCtx->streams[videoStream]->codec;
+
+	// Find the decoder for the video stream  
+	pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
+	if (pCodec == NULL)
+		return -1; // Codec not found  
+
+				   // Open codec  
+	if (avcodec_open2(pCodecCtx, pCodec, 0) < 0)
+		return -1; // Could not open codec  
+
+				   // Hack to correct wrong frame rates that seem to be generated by some codecs  
+	if (pCodecCtx->time_base.num > 1000 && pCodecCtx->time_base.den == 1)
+		pCodecCtx->time_base.den = 1000;
+
+	// Allocate video frame  
+	pFrame = av_frame_alloc();
+
+	// Allocate an AVFrame structure  
+	pFrameRGB = av_frame_alloc();
+	if (pFrameRGB == NULL)
+		return -1;
+
+	// Determine required buffer size and allocate buffer  
+	numBytes = avpicture_get_size(AV_PIX_FMT_RGB24, pCodecCtx->width,
+		pCodecCtx->height);
+
+	//buffer=malloc(numBytes);  
+	buffer = (uint8_t *)av_malloc(numBytes * sizeof(uint8_t));
+
+	// Assign appropriate parts of buffer to image planes in pFrameRGB  
+	avpicture_fill((AVPicture *)pFrameRGB, buffer, AV_PIX_FMT_RGB24,
+		pCodecCtx->width, pCodecCtx->height);
+	// Read frames and save first five frames to disk  
+	inumber = 0;
+	long prepts = 0;
+	while (av_read_frame(pFormatCtx, &packet) >= 0)
+	{
+		// Is this a packet from the video stream?  
+		if (packet.stream_index == videoStream)
+		{
+			// Decode video frame  
+			avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+
+			// Did we get a video frame?  
+			if (frameFinished)
+			{
+				static struct SwsContext *img_convert_ctx;
+
+				// Convert the image into YUV format that SDL uses  
+				if (img_convert_ctx == NULL) {
+					int w = pCodecCtx->width;
+					int h = pCodecCtx->height;
+
+					img_convert_ctx = sws_getContext(w, h,
+						pCodecCtx->pix_fmt,
+						w, h, AV_PIX_FMT_RGB24, SWS_BICUBIC,
+						NULL, NULL, NULL);
+					if (img_convert_ctx == NULL) {
+						fprintf(stderr, "Cannot initialize the conversion context!\n");
+						exit(1);
+					}
+				}
+				int ret = sws_scale(img_convert_ctx, pFrame->data, pFrame->linesize, 0,
+					pCodecCtx->height, pFrameRGB->data, pFrameRGB->linesize);//ffmpeg的从yuv420格式转换到bgr24格式。  
+
+				int w = pCodecCtx->width;
+				int h = pCodecCtx->height;
+				img = cvCreateImageHeader(cvSize(w, h), 8, 3);
+				img->imageData = (char *)(*(pFrameRGB->data));//把ffmpeg格式转换到opencv的bgr格式。  
+				//cvShowImage("Demo", img);
+				//cvWaitKey(2);
+				 
+				
+				if(count==0)
+				{
+					buff[0] = get_image_from_stream_eggplant(img);
+					buff[1] = copy_image(buff[0]);
+					buff[2] = copy_image(buff[0]);
+					buff_letter[0] = letterbox_image(buff[0], net->w, net->h);
+					buff_letter[1] = letterbox_image(buff[0], net->w, net->h);
+					buff_letter[2] = letterbox_image(buff[0], net->w, net->h);
+					ipl = cvCreateImage(cvSize(buff[0].w, buff[0].h), IPL_DEPTH_8U, buff[0].c);
+
+				}
+				
+				//printf("count=%d\n", count);
+				
+
+				buff_index = (buff_index + 1) % 3;
+
+				//if (pthread_create(&fetch_thread, 0, fetch_in_thread, 0)) error("Thread creation failed");
+
+				int status = fill_image_from_stream_eggplant(img, buff[buff_index]);
+				letterbox_image_into(buff[buff_index], net->w, net->h, buff_letter[buff_index]);
+				if (status == 0) demo_done = 1;
+
+				//if (pthread_create(&detect_thread, 0, detect_in_thread, 0)) error("Thread creation failed");
+
+				running = 1;
+				float nms = .4;
+
+				layer l = net->layers[net->n - 1];
+				float *X = buff_letter[(buff_index + 2) % 3].data;
+				network_predict(net, X);
+
+				remember_network(net);
+				detection *dets = 0;
+				int nboxes = 0;
+				dets = avg_predictions(net, &nboxes);
+
+
+				if (nms > 0) do_nms_obj(dets, nboxes, l.classes, nms);
+
+				printf("\033[2J");
+				printf("\033[1;1H");
+				printf("\nFPS:%.1f\n", fps);
+				printf("Objects:\n\n");
+				image display = buff[(buff_index + 2) % 3];
+				draw_detections(display, dets, nboxes, demo_thresh, demo_names, demo_alphabet, demo_classes);
+				free_detections(dets, nboxes);
+
+				demo_index = (demo_index + 1) % demo_frame;
+				running = 0;
+				fps = 1. / (what_time_is_it_now() - demo_time);
+				demo_time = what_time_is_it_now();
+				display_in_thread(0);
+				
+				++count;
+
+				prepts = packet.pts;
+			}
+		}
+
+		// Free the packet that was allocated by av_read_frame  
+		av_free_packet(&packet);
+	}
+
+	// Free the RGB image  
+	//free(buffer);  
+	av_free(buffer);
+	av_free(pFrameRGB);
+
+	// Free the YUV frame  
+	av_free(pFrame);
+
+	// Close the codec  
+	avcodec_close(pCodecCtx);
+
+	// Close the video file  
+	avformat_close_input(&pFormatCtx);
+	 
 }
 
 /*

@@ -660,6 +660,17 @@ image get_image_from_stream(CvCapture *cap)
     return im;
 }
 
+
+image get_image_from_stream_eggplant(IplImage *cap)
+{
+	//IplImage* src = cvCloneImage(cap);
+	if (!cap) return make_empty_image(0, 0, 0);
+	image im = ipl_to_image(cap);
+	cvReleaseImage(&cap);
+	rgbgr_image(im);
+	return im;
+}
+
 int fill_image_from_stream(CvCapture *cap, image im)
 {
     IplImage* src = cvQueryFrame(cap);
@@ -667,6 +678,15 @@ int fill_image_from_stream(CvCapture *cap, image im)
     ipl_into_image(src, im);
     rgbgr_image(im);
     return 1;
+}
+
+int fill_image_from_stream_eggplant(IplImage *cap, image im)
+{
+	//IplImage* src = cap;
+	if (!cap) return 0;
+	ipl_into_image(cap, im);
+	rgbgr_image(im);
+	return 1;
 }
 
 void save_image_jpg(image p, const char *name)

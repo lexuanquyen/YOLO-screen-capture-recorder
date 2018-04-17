@@ -413,7 +413,7 @@ int main(int argc, char **argv)
 	
 	//yolotest.exe detector demo cfg / coco.data cfg / yolov3.cfg yolov3.weights abc.mp4
 	printf("%d\t%s\t%s\t%s\t%s\t%s\t%s\n", argc, argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]);
-	system("pause");
+	//system("pause");
 	
     //test_resize("data/bad.jpg");
     //test_box();
