@@ -1,57 +1,7 @@
-﻿  demo.c
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\cuda_runtime.h : warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
-c:\program files\nvidia gpu computing toolkit\cuda\v9.0\include\cuda_runtime_api.h(1950): warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include\cuda_runtime.h : warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
-E:\test\YOLO-screen-capture-recorder\code\opencv340\include\opencv2/core/types_c.h(929): warning C4013: 'cvRound' 未定義; 假設 extern 傳回整數
-e:\test\yolo-screen-capture-recorder\code\include\libavutil\rational.h : warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
-cpfolder\demo.c(51): warning C4101: 'channels_nb': 未參考的區域變數
-cpfolder\demo.c(51): warning C4101: 'depth': 未參考的區域變數
-cpfolder\demo.c(130): warning C4018: '<': signed/unsigned 不相符
-cpfolder\demo.c(210): warning C4244: '函式': 將 'int64_t' 轉換為 'int'，由於類型不同，可能導致資料遺失
-cpfolder\demo.c(214): warning C4244: '=': 將 'int64_t' 轉換為 'long'，由於類型不同，可能導致資料遺失
-cpfolder\demo.c(164): warning C4996: 'avpicture_get_size': 宣告為已被取代
-  E:\test\YOLO-screen-capture-recorder\code\include\libavcodec/avcodec.h(5653): note: 請參閱 'avpicture_get_size' 的宣告
-cpfolder\demo.c(171): warning C4996: 'avpicture_fill': 宣告為已被取代
-  E:\test\YOLO-screen-capture-recorder\code\include\libavcodec/avcodec.h(5638): note: 請參閱 'avpicture_fill' 的宣告
-cpfolder\demo.c(186): warning C4996: 'avcodec_decode_video2': 宣告為已被取代
-  E:\test\YOLO-screen-capture-recorder\code\include\libavcodec/avcodec.h(4993): note: 請參閱 'avcodec_decode_video2' 的宣告
-cpfolder\demo.c(219): warning C4996: 'av_free_packet': 宣告為已被取代
-  E:\test\YOLO-screen-capture-recorder\code\include\libavcodec/avcodec.h(4650): note: 請參閱 'av_free_packet' 的宣告
-cpfolder\demo.c(243): warning C4047: '函式': 'IplImage *' 與 'IplImage **' 間接取值的層級不同
-cpfolder\demo.c(243): warning C4024: 'fill_iplimage_from_frame': 型式和實質參數 1 不同的類型
-cpfolder\demo.c(267): warning C4244: '函式': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
-cpfolder\demo.c(283): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
-cpfolder\demo.c(353): warning C4305: '+=': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
-cpfolder\demo.c(356): warning C4305: '-=': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
-cpfolder\demo.c(357): warning C4305: '=': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
-cpfolder\demo.c(360): warning C4305: '+=': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
-cpfolder\demo.c(363): warning C4305: '-=': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
-cpfolder\demo.c(619): warning C4566: 由通用字元名稱 '\u65E0' 表示的字元，無法在目前的字碼頁中表示 (950)
-cpfolder\demo.c(619): warning C4566: 由通用字元名稱 '\u5F00' 表示的字元，無法在目前的字碼頁中表示 (950)
-cpfolder\demo.c(619): warning C4566: 由通用字元名稱 '\u8F93' 表示的字元，無法在目前的字碼頁中表示 (950)
-cpfolder\demo.c(620): warning C4098: 'demo': 'void' 函式正在傳回值
-cpfolder\demo.c(641): warning C4018: '<': signed/unsigned 不相符
-cpfolder\demo.c(648): warning C4098: 'demo': 'void' 函式正在傳回值
-cpfolder\demo.c(656): warning C4098: 'demo': 'void' 函式正在傳回值
-cpfolder\demo.c(660): warning C4098: 'demo': 'void' 函式正在傳回值
-cpfolder\demo.c(672): warning C4098: 'demo': 'void' 函式正在傳回值
-cpfolder\demo.c(775): warning C4244: '=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
-cpfolder\demo.c(781): warning C4244: '=': 將 'int64_t' 轉換為 'long'，由於類型不同，可能導致資料遺失
-cpfolder\demo.c(675): warning C4996: 'avpicture_get_size': 宣告為已被取代
-  E:\test\YOLO-screen-capture-recorder\code\include\libavcodec/avcodec.h(5653): note: 請參閱 'avpicture_get_size' 的宣告
-cpfolder\demo.c(682): warning C4996: 'avpicture_fill': 宣告為已被取代
-  E:\test\YOLO-screen-capture-recorder\code\include\libavcodec/avcodec.h(5638): note: 請參閱 'avpicture_fill' 的宣告
-cpfolder\demo.c(693): warning C4996: 'avcodec_decode_video2': 宣告為已被取代
-  E:\test\YOLO-screen-capture-recorder\code\include\libavcodec/avcodec.h(4993): note: 請參閱 'avcodec_decode_video2' 的宣告
-cpfolder\demo.c(751): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
-cpfolder\demo.c(786): warning C4996: 'av_free_packet': 宣告為已被取代
-  E:\test\YOLO-screen-capture-recorder\code\include\libavcodec/avcodec.h(4650): note: 請參閱 'av_free_packet' 的宣告
-cpfolder\demo.c(530): warning C4101: 'detect_thread': 未參考的區域變數
-cpfolder\demo.c(531): warning C4101: 'fetch_thread': 未參考的區域變數
-  正在產生程式碼
-  64 of 785 functions ( 8.2%) were compiled, the rest were copied from previous compilation.
+﻿  正在產生程式碼
+  63 of 785 functions ( 8.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    53 functions had inline decision re-evaluated but remain unchanged
+    52 functions had inline decision re-evaluated but remain unchanged
   已完成程式碼產生
   yolotest.vcxproj -> E:\test\YOLO-screen-capture-recorder\code\x64\Release\yolotest.exe
   yolotest.vcxproj -> E:\test\YOLO-screen-capture-recorder\code\x64\Release\yolotest.pdb (Full PDB)
